@@ -1,0 +1,51 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <script>
+    async function start() {
+	const model = await tf.loadLayersModel('mnistjs/model.json');
+	console.log(model.summary())
+
+	var video = document.getElementById('video');
+	if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+	    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+		video.srcObject = stream;
+		video.play();
+	    });
+	}
+
+	var canvas = document.createElement('canvas')
+	canvas.width = 28;
+	canvas.height = 28;
+
+	var prediction = document.getElementById('prediction')
+	var result = document.getElementById('result')
+
+	function detect(model, video) {
+		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, canvas.width, canvas.height);		
+	
+		let img = tf.browser.fromPixels(canvas,1);
+		img=img.expandDims(0);
+		const predict = model.predict(img);
+
+		prediction.innerHTML = predict.dataSync();
+		result.innerHTML = predict.argMax(1).dataSync()[0];
+		
+		window.setTimeout( ()=>{ detect(model, video); } , 1000 );
+	}
+	
+	video.addEventListener('loadeddata', (event) => { 
+		detect(model,video);
+	});	
+    }
+    start();
+    </script>
+ </head>
+<body>
+<video id="video" width="640" height="480" autoplay></video>
+<div id="prediction"></div>
+<div id="result"></div>
+</body>
+</html>
