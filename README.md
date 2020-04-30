@@ -1,6 +1,6 @@
-[![GithubCI](https://github.com/mpromonet/tfjs-minist/workflows/C/C++%20CI/badge.svg)](https://github.com/mpromonet/tfjs-minist/actions)
+[![GithubCI](https://github.com/mpromonet/tfjs-mnist/workflows/Python%20application/badge.svg)](https://github.com/mpromonet/tfjs-mnist/actions)
 
-[![Heroku](https://heroku-badge.herokuapp.com/?app=tfjs-minist)](https://tfjs-minist.herokuapp.com/)
+[![Heroku](https://heroku-badge.herokuapp.com/?app=tfjs-mnist)](https://tfjs-mnist.herokuapp.com/)
 
 # tfjs-minist
 =============
@@ -10,7 +10,7 @@ Build model & train model & export as tfjs model
 -----------
 ```
 pip install -r requirements.txt
-python ./minist.py
+python ./mnist.py
 ```
 Run
 ------
