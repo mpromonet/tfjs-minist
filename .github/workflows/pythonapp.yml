@@ -32,5 +32,5 @@ jobs:
     - uses: akhileshns/heroku-deploy@v3.0.4
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: tfjs-minist
+        heroku_app_name: tfjs-mnist
         heroku_email: michel.promonet@free.fr
