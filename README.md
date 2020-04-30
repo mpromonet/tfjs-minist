@@ -5,7 +5,7 @@
 tfjs-minist
 =============
 
-Try with tensorflow js using minist model
+Try tensorflow js with mnist model
 
 Build model & train model & export as tfjs model
 -----------
