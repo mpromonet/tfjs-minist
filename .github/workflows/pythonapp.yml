@@ -25,7 +25,12 @@ jobs:
     - name: Build
       run:  python ./mnist.py
         
-    - name: Deploy
+    - name: Commit
       run: |
         git add -A && git -c user.name='ci' -c user.email='ci@email.org' commit -m 'deploy' 
-        git push -f https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/tfjs-minist.git origin/master:master
+  
+    - uses: akhileshns/heroku-deploy@v3.0.4
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: tfjs-minist
+        heroku_email: michel.promonet@free.fr
