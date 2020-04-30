@@ -27,5 +27,5 @@ jobs:
         
     - name: Deploy
       run: |
-        git add -A && git commit -m 'deploy' -c user.name='ci' -c user.email='ci@email.org'
+        git add -A && git -c user.name='ci' -c user.email='ci@email.org' commit -m 'deploy' 
         git push -f https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/tfjs-minist.git origin/master:master
