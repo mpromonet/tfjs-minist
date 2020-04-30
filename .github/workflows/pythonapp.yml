@@ -14,10 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       
-    - name: Set up Python 3.8
+    - name: Set up Python 
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: 3.6
+
     - name: Install dependencies
       run: pip install -r requirements.txt        
       
@@ -26,5 +27,5 @@ jobs:
         
     - name: Deploy
       run: |
-        git commit -a -m 'deploy' 
+        git add -A && git commit -m 'deploy' 
         git push -f https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/tfjs-minist.git origin/master:master
