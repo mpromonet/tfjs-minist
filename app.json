@@ -1,0 +1,14 @@
+{
+  "name": "tfjs_mnist",
+  "description": "TensorFlow JS MNIST",
+  "image": "heroku/python",
+  "repository": "https://github.com/mpromonet/tfjs_mnist",
+  "keywords": ["python"],
+  "environments": {
+    "test": {
+      "scripts": {
+        "build": "python mnist.py"
+      }
+    }
+  }
+}
