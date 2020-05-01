@@ -1,74 +1,83 @@
 <html>
 <head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script>
     async function start() {
-	const model = await tf.loadLayersModel('mnistjs/model.json');
-	model.summary()
+        const model = await tf.loadLayersModel('mnistjs/model.json');
+        model.summary()
 
-	var input = document.getElementById('input');
-	var ctx = input.getContext('2d');
+        var input = document.getElementById('input');
+        var ctx = input.getContext('2d');
 
-	// last known position
-	var pos = { x: 0, y: 0 };
+        // last known position
+        var pos = { x: 0, y: 0 };
 
-	document.addEventListener('mousemove', draw);
-	document.addEventListener('mousedown', setPosition);
-	document.addEventListener('mouseenter', setPosition);
+        document.addEventListener('mousemove', draw);
+        document.addEventListener('mousedown', setPosition);
+        document.addEventListener('mouseenter', setPosition);
 
-	// new position from mouse event
-	function setPosition(e) {
-	  pos.x = e.clientX;
-	  pos.y = e.clientY;
-	}
+        // new position from mouse event
+        function setPosition(e) {
+            if (e.target) {
+                var rect = e.target.getBoundingClientRect();
+                pos.x = e.clientX  - rect.left;
+                pos.y = e.clientY - rect.top;
+            }
+        }
 
-	function draw(e) {
-	  // mouse left button must be pressed
-	  if (e.buttons !== 1) return;
+        function draw(e) {
+            if ((e.buttons === 1) || (e.buttons === 2) ) {
+                ctx.beginPath();
+                ctx.lineWidth = (e.buttons === 1) ?  5 :  10;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = (e.buttons === 1) ? 'black' : 'white';
+                ctx.moveTo(pos.x, pos.y); 
+                setPosition(e);
+                ctx.lineTo(pos.x, pos.y); 
+                ctx.stroke(); 
+            }
+        }
 
-	  ctx.beginPath(); // begin
+        var canvas = document.createElement('canvas')
+        canvas.width = 28;
+        canvas.height = 28;
 
-	  ctx.lineWidth = 5;
-	  ctx.lineCap = 'round';
-	  ctx.strokeStyle = 'black';
+        var prob = document.getElementById('prob')
+        var result = document.getElementById('result')
 
-	  ctx.moveTo(pos.x, pos.y); // from
-	  setPosition(e);
-	  ctx.lineTo(pos.x, pos.y); // to
+        function detect(model, input) {
+        
+            // resize canvas to 28x28
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);		
+    
+            // convert to a tensor for model input
+            const  img = tf.browser.fromPixels(canvas,4).mean(2).expandDims(0).expandDims(-1);
 
-	  ctx.stroke(); // draw it!
-	}
+            // computation
+            const predict = model.predict(img);
 
-	var canvas = document.createElement('canvas')
-	canvas.width = 28;
-	canvas.height = 28;
+            // display result
+            const predictValue = predict.argMax(1).dataSync()[0];
+            result.innerHTML = predictValue;
+            prob.innerHTML = " (" + predict.dataSync()[predictValue] + ")" ;
 
-	var prediction = document.getElementById('prediction')
-	var result = document.getElementById('result')
+            window.setTimeout( ()=>{ detect(model, input); } , 1000 );
+        }
 
-	function detect(model, input) {
-		const ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);		
-		
-		let img = tf.browser.fromPixels(canvas,4).mean(2).expandDims(0).expandDims(-1);
-		const predict = model.predict(img);
-
-		const rpredict = tf.round(predict.mul(10));
-		prediction.innerHTML = rpredict.dataSync();
-		result.innerHTML = predict.argMax(1).dataSync()[0];
-		
-		window.setTimeout( ()=>{ detect(model, input); } , 1000 );
-	}
-	
-	detect(model,input);
+        detect(model,input);
     }
     start();
     </script>
  </head>
 <body>
-<canvas id="input" width="100" height="100"></canvas>
-<div id="prediction"></div>
-<div id="result"></div>
+  <center>
+    <h1>mnist</h1>
+    <canvas id="input" width="100" height="100" style="border-style:solid;border-width:1"></canvas>
+    <h2 id="result"></h2>
+    <h3 id="prob"></h2>
+  </center>
 </body>
 </html>
