@@ -56,9 +56,13 @@ def trainModel(model, BUFFER_SIZE, BATCH_SIZE, NUM_EPOCHS):
 	print('Test loss: {0:.2f}. Test accuracy: {1:.2f}%'.format(test_loss, test_accuracy*100.))
 
 # save for tfjs
-def saveModelJS(model):		
+def saveModel(model):		
+	# save for tfjs
 	tfjs.converters.save_keras_model(model, "mnistjs")
-
+	# save for tflite
+	tflite_model = tf.lite.TFLiteConverter.from_keras_model(model).convert()
+	open("mnist.tflite", "wb").write(tflite_model)
+	
 if __name__ == '__main__':
 	hidden_layer_size = 200
 	model=createModel(hidden_layer_size)
@@ -67,4 +71,4 @@ if __name__ == '__main__':
 	BATCH_SIZE = 100
 	NUM_EPOCHS = 15
 	trainModel(model, BUFFER_SIZE, BATCH_SIZE, NUM_EPOCHS)
-	saveModelJS(model)
+	saveModel(model)
