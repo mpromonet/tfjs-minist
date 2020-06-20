@@ -31,21 +31,13 @@ def trainModel(model, BUFFER_SIZE, BATCH_SIZE, NUM_EPOCHS):
 	num_test_samples = mnist_info.splits['test'].num_examples
 	num_test_samples = tf.cast(num_test_samples, tf.int64)
 
-	def scale(image, label):
-		image = tf.cast(image, tf.float32)
-		image /= 255.
-		return image, label
-
-	scaled_train_and_validation_data = mnist_train.map(scale)
-	test_data = mnist_test.map(scale)
-
-	shuffled_train_and_validation_data = scaled_train_and_validation_data.shuffle(BUFFER_SIZE)
+	shuffled_train_and_validation_data = mnist_train.shuffle(BUFFER_SIZE)
 	validation_data = shuffled_train_and_validation_data.take(num_validation_samples)
 	train_data = shuffled_train_and_validation_data.skip(num_validation_samples)
 	
 	train_data = train_data.batch(BATCH_SIZE)
 	validation_data = validation_data.batch(num_validation_samples)
-	test_data = test_data.batch(num_test_samples)
+	test_data = mnist_test.batch(num_test_samples)
 	validation_inputs, validation_targets = next(iter(validation_data))
 	
 	# training
@@ -57,6 +49,8 @@ def trainModel(model, BUFFER_SIZE, BATCH_SIZE, NUM_EPOCHS):
 
 # save for tfjs
 def saveModel(model):		
+	# save
+	tf.saved_model.save(model, "mnist")
 	# save for tfjs
 	tfjs.converters.save_keras_model(model, "mnistjs")
 	# save for tflite
