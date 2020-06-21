@@ -1,3 +1,5 @@
 tensorflow 
 tensorflow_datasets
 tensorflowjs
+flask
+numpy
