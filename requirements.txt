@@ -3,3 +3,4 @@ tensorflow_datasets
 tensorflowjs
 flask
 numpy
+opencv-python
