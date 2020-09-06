@@ -47,8 +47,7 @@ def upload_file():
     <!doctype html>
     <title>Upload new File</title>
     <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
+      <input type=file name=file onchange="form.submit()">
     </form>
     '''
 
