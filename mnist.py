@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -47,6 +47,7 @@ def trainModel(model, BUFFER_SIZE, BATCH_SIZE, NUM_EPOCHS):
 	test_loss, test_accuracy = model.evaluate(test_data)
 	print('Test loss: {0:.2f}. Test accuracy: {1:.2f}%'.format(test_loss, test_accuracy*100.))
 
+
 # save for tfjs
 def saveModel(model):		
 	# save
@@ -54,8 +55,12 @@ def saveModel(model):
 	# save for tfjs
 	tfjs.converters.save_keras_model(model, "mnistjs")
 	# save for tflite
-	tflite_model = tf.lite.TFLiteConverter.from_keras_model(model).convert()
+	converter = tf.lite.TFLiteConverter.from_keras_model(model)
+	tflite_model = converter.convert()
 	open("mnist.tflite", "wb").write(tflite_model)
+	converter.optimizations = [tf.lite.Optimize.DEFAULT]
+	tflite_model = converter.convert()
+	open("mnist_quant.tflite", "wb").write(tflite_model)
 	
 if __name__ == '__main__':
 	hidden_layer_size = 200
